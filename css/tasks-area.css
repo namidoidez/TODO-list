@@ -1,0 +1,16 @@
+.tasks {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.tasks section {
+    width: 26%;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.tasks__list {
+    list-style: none;
+    padding-left: 0;
+}

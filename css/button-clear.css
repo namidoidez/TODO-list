@@ -1,0 +1,16 @@
+.task__button--clear {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    margin-top: 10px;
+    color: white;
+    background-color: brown;
+    cursor: pointer;
+    text-align: center;
+}
+
+.task__button--clear:hover {
+    color: black;
+    background-color: gray;
+}
