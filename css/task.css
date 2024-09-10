@@ -31,31 +31,3 @@
 .tasks__item--brown::before {
     background-color: #fbe3e3;
 }
-
-.task__title {
-    width: fit-content;
-    padding: 10px 10px;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.task__title--black {
-    color: white;
-    background-color: black;
-}
-
-.task__title--royalblue {
-    color: white;
-    background-color: royalblue;
-}
-
-.task__title--green {
-    color: white;
-    background-color: green;
-}
-
-.task__title--brown {
-    color: white;
-    background-color: brown;
-}
