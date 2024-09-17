@@ -2,11 +2,6 @@ import Component from './component.js';
 
 
 function createTaskListComponentTemplate(taskListName, taskColor) {
-    if (!taskListName)
-        taskListName = `Название блока`;
-    if (!taskColor)
-        taskListName = `black`;
-
     return (
         `<section class="tasks">
             <h3 class="tasks__title tasks__title--${taskColor}">${taskListName}</h3>
