@@ -1,10 +1,10 @@
 import Component from './component.js';
 
 
-function createTaskListComponentTemplate(taskListName, taskColor) {
+function createTaskListComponentTemplate(taskListTitle, taskColor) {
     return (
         `<section class="tasks">
-            <h3 class="tasks__title tasks__title--${taskColor}">${taskListName}</h3>
+            <h3 class="tasks__title tasks__title--${taskColor}">${taskListTitle}</h3>
             <ul class="tasks__list">
             </ul>
         </section>`
@@ -12,13 +12,13 @@ function createTaskListComponentTemplate(taskListName, taskColor) {
 }
 
 export default class TaskListComponent extends Component {
-    constructor(taskListName = `Название блока`, taskColor = `black`) {
+    constructor(taskListTitle = `Название блока`, taskColor = `black`) {
         super();
-        this.taskListName = taskListName;
+        this.taskListTitle = taskListTitle;
         this.taskColor = taskColor;
     }
     
     getTemplate() {
-        return createTaskListComponentTemplate(this.taskListName, this.taskColor);
+        return createTaskListComponentTemplate(this.taskListTitle, this.taskColor);
     }
 }
