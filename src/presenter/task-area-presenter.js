@@ -17,12 +17,12 @@ export default class TasksAreaPresenter {
         render(this.taskAreaComponent, this.taskAreaContainer);
         
         var taskListContainer = null;
-        this.taskModel.getTasks().forEach((taskList) => {
+        this.taskModel.getTasks().forEach((taskList, index) => {
             var taskColor = taskList.color;
             var taskListComponent = new TaskListComponent(taskList.title, taskColor);
             render(taskListComponent, this.taskAreaContainer);
 
-            taskListContainer = taskListComponent.getElement();
+            taskListContainer = this.taskAreaContainer.querySelectorAll(".tasks__list")[index];
             taskList.items.forEach(item => {
                 var taskComponent = new TaskComponent(item.task, taskColor);
                 render(taskComponent, taskListContainer);
