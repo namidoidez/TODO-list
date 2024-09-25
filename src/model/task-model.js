@@ -1,9 +1,9 @@
 import {taskArea} from '../mock/task.js'
 
 export default class TaskModel {
-    tasks = taskArea;
+    #tasks = taskArea;
 
-    getTasks() {
-        return this.tasks;
+    get tasks() {
+        return this.#tasks;
     }
 }

@@ -15,7 +15,7 @@ export default class TaskAreaPresenter {
     }
 
     init() {
-        this.#taskArea = this.#taskModel.getTasks();
+        this.#taskArea = this.#taskModel.tasks;
         this.#renderTaskArea();
     }
     
