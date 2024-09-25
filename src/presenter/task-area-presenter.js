@@ -5,17 +5,13 @@ import ButtonClearComponent from '../view/button-clear-component.js';
 import {render} from '../framework/render.js';
 
 
-export default class TasksAreaPresenter {
-    taskAreaComponent = new TaskAreaComponent();
-    
+export default class TasksAreaPresenter {   
     constructor(taskModel, taskAreaContainer) {
         this.taskModel = taskModel;
         this.taskAreaContainer = taskAreaContainer;
     }
 
-    init() {
-        render(this.taskAreaComponent, this.taskAreaContainer);
-        
+    init() {       
         var taskListContainer = null;
         this.taskModel.getTasks().forEach((taskList, index) => {
             var taskColor = taskList.color;
