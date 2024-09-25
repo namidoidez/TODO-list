@@ -1,4 +1,4 @@
-import Component from './component.js';
+import AbstractComponent from '../framework/view/abstract-component.js';
 
 
 function createTaskListComponentTemplate(taskListTitle, taskColor) {
@@ -11,7 +11,7 @@ function createTaskListComponentTemplate(taskListTitle, taskColor) {
     );
 }
 
-export default class TaskListComponent extends Component {
+export default class TaskListComponent extends AbstractComponent {
     constructor(taskListTitle = `Название блока`, taskColor = `black`) {
         super();
         this.taskListTitle = taskListTitle;

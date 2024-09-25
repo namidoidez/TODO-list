@@ -1,7 +1,7 @@
-import {createElement} from '../framework/render.js';
+import {createElement} from '../render.js';
 
 
-export default class Component {
+export default class AbstractComponent {
     constructor() {
         
     }

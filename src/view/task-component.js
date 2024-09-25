@@ -1,4 +1,4 @@
-import Component from './component.js';
+import AbstractComponent from '../framework/view/abstract-component.js';
 
 
 function createTaskComponentTemplate(task, taskColor) {
@@ -7,7 +7,7 @@ function createTaskComponentTemplate(task, taskColor) {
     );
 }
 
-export default class TaskComponent extends Component {
+export default class TaskComponent extends AbstractComponent {
     constructor(task = `Название задачи`, taskColor = `black`) {
         super();
         this.task = task;

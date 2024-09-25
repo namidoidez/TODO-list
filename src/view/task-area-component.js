@@ -1,4 +1,4 @@
-import Component from './component.js';
+import AbstractComponent from '../framework/view/abstract-component.js';
 
 
 function createTaskAreaComponentTemplate() {
@@ -8,7 +8,7 @@ function createTaskAreaComponentTemplate() {
     );
 }
 
-export default class TaskAreaComponent extends Component {
+export default class TaskAreaComponent extends AbstractComponent {
     getTemplate() {
         return createTaskAreaComponentTemplate();
     }

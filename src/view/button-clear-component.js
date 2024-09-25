@@ -1,4 +1,4 @@
-import Component from './component.js';
+import AbstractComponent from '../framework/view/abstract-component.js';
 
 
 function createButtonClearComponentTemplate() {
@@ -7,7 +7,7 @@ function createButtonClearComponentTemplate() {
     );
 }
 
-export default class ButtonClearComponent extends Component {
+export default class ButtonClearComponent extends AbstractComponent {
     getTemplate() {
         return createButtonClearComponentTemplate();
     }

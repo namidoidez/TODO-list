@@ -1,4 +1,4 @@
-import Component from './component.js';
+import AbstractComponent from '../framework/view/abstract-component.js';
 
 
 function createFormAddTaskComponentTemplate() {
@@ -12,7 +12,7 @@ function createFormAddTaskComponentTemplate() {
     );
 }
 
-export default class FormAddTaskComponent extends Component {
+export default class FormAddTaskComponent extends AbstractComponent {
     getTemplate() {
         return createFormAddTaskComponentTemplate();
     }
