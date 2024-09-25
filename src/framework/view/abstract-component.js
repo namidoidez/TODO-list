@@ -2,23 +2,27 @@ import {createElement} from '../render.js';
 
 
 export default class AbstractComponent {
+    #element = null;
+    
     constructor() {
-        
+        if (new.target === AbstractComponent) {
+            throw new Error('Cat\'t instantiate AbstractComponent, only concrete one.');
+        }
+    }   
+
+    get template() {
+        throw new Error('Abstract method not implemented: get template');
     }
 
-    getTemplate() {
-        
-    }
-
-    getElement() {
-        if (!this.element) {
-            this.element = createElement(this.getTemplate());
+    get element() {
+        if (!this.#element) {
+            this.#element = createElement(this.template);
         }
         
-        return this.element;
+        return this.#element;
     }
 
     removeElement() {
-        this.element = null;
+        this.#element = null;
     }
 }

@@ -12,13 +12,13 @@ function createTaskListComponentTemplate(taskListTitle, taskColor) {
 }
 
 export default class TaskListComponent extends AbstractComponent {
-    constructor(taskListTitle = `Название блока`, taskColor = `black`) {
+    constructor(taskListTitle = 'Название блока', taskColor = 'black') {
         super();
         this.taskListTitle = taskListTitle;
         this.taskColor = taskColor;
     }
     
-    getTemplate() {
+    get template() {
         return createTaskListComponentTemplate(this.taskListTitle, this.taskColor);
     }
 }

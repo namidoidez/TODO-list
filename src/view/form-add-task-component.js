@@ -13,7 +13,7 @@ function createFormAddTaskComponentTemplate() {
 }
 
 export default class FormAddTaskComponent extends AbstractComponent {
-    getTemplate() {
+    get template() {
         return createFormAddTaskComponentTemplate();
     }
 }

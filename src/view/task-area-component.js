@@ -9,7 +9,7 @@ function createTaskAreaComponentTemplate() {
 }
 
 export default class TaskAreaComponent extends AbstractComponent {
-    getTemplate() {
+    get template() {
         return createTaskAreaComponentTemplate();
     }
 }

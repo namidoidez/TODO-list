@@ -8,13 +8,13 @@ function createTaskComponentTemplate(task, taskColor) {
 }
 
 export default class TaskComponent extends AbstractComponent {
-    constructor(task = `Название задачи`, taskColor = `black`) {
+    constructor(task = 'Название задачи', taskColor = 'black') {
         super();
         this.task = task;
         this.taskColor = taskColor;
     }
 
-    getTemplate() {
+    get template() {
         return createTaskComponentTemplate(this.task, this.taskColor);
     }
 }
