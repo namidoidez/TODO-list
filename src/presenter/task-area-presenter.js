@@ -5,17 +5,17 @@ import {render} from '../framework/render.js';
 
 
 export default class TaskAreaPresenter {
-    #taskModel = null;
+    #tasksModel = null;
     #taskArea = null;
     #taskAreaContainer = null;
 
-    constructor(taskModel, taskAreaContainer) {
-        this.#taskModel = taskModel;
+    constructor(tasksModel, taskAreaContainer) {
+        this.#tasksModel = tasksModel;
         this.#taskAreaContainer = taskAreaContainer;
     }
 
     init() {
-        this.#taskArea = this.#taskModel.tasks;
+        this.#taskArea = this.#tasksModel.tasks;
         this.#renderTaskArea();
     }
     
