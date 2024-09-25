@@ -1,8 +1,8 @@
 import HeaderComponent from './view/header-component.js';
 import FormAddTaskComponent from './view/form-add-task-component.js';
 import TaskAreaComponent from './view/task-area-component.js';
-import TasksAreaPresenter from './presenter/task-area-presenter.js';
-import TaskModel from './model/task-model.js'
+import TaskAreaPresenter from './presenter/task-area-presenter.js';
+import TasksModel from './model/tasks-model.js'
 import {render, RenderPosition} from './framework/render.js';
 
 
@@ -14,6 +14,6 @@ render(new FormAddTaskComponent(), mainContainer, RenderPosition.AFTERBEGIN);
 render(new TaskAreaComponent(), mainContainer);
 
 const taskAreaContainer = mainContainer.querySelector(".container");
-const tasksModel = new TaskModel();
-const taskAreaPresenter = new TasksAreaPresenter(tasksModel, taskAreaContainer);
+const tasksModel = new TasksModel();
+const taskAreaPresenter = new TaskAreaPresenter(tasksModel, taskAreaContainer);
 taskAreaPresenter.init();
