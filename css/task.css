@@ -31,3 +31,10 @@
 .tasks__item--brown::before {
     background-color: #fbe3e3;
 }
+
+.tasks__item--empty {
+    background-color: transparent;
+    color: grey;
+    border-style: groove;
+    border-width: 2px;
+}

@@ -1,5 +1,6 @@
 import TaskListComponent from '../view/task-list-component.js';
 import TaskComponent from '../view/task-component.js';
+import EmptyTaskComponent from '../view/empty-task-component.js';
 import ButtonClearComponent from '../view/button-clear-component.js';
 import {render} from '../framework/render.js';
 
@@ -28,7 +29,13 @@ export default class TaskAreaPresenter {
             render(taskListComponent, this.#taskAreaContainer);
             
             taskListContainer = this.#taskAreaContainer.querySelectorAll('.tasks__list')[index];
-            this.#renderTaskList(taskList.items, taskColor, taskListContainer);
+            
+            if (taskList.items.length > 0) {    
+                this.#renderTaskList(taskList.items, taskColor, taskListContainer);
+            }
+            else {
+                render(new EmptyTaskComponent(), taskListContainer);
+            }
         });
             
         render(new ButtonClearComponent(), taskListContainer);
