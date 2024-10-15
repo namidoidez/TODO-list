@@ -13,7 +13,7 @@ export default class TaskAreaPresenter {
     #taskAreaContainer = null;
     #taskAreaComponent = new TaskAreaComponent();
     #emptyTaskComponent = new EmptyTaskComponent();
-    #buttonClearComponent = new ButtonClearComponent();
+    #buttonClearComponent = new ButtonClearComponent(this.clearBasket.bind(this));
 
     constructor(tasksModel, mainContainer) {
         this.#tasksModel = tasksModel;
@@ -74,6 +74,11 @@ export default class TaskAreaPresenter {
         this.#tasksModel.addTask(task);
 
         document.querySelector('.new-task__input').value = '';
+    }
+
+    clearBasket() {
+        this.#tasksModel.removeTasksByStatus(TaskListStatus.BASKET);
+        this.#buttonClearComponent.element.disabled = true;
     }
 
     #clearTaskArea() {
