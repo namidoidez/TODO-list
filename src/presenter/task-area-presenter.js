@@ -4,6 +4,7 @@ import TaskComponent from '../view/task-component.js';
 import EmptyTaskComponent from '../view/empty-task-component.js';
 import ButtonClearComponent from '../view/button-clear-component.js';
 import {render} from '../framework/render.js';
+import {TaskListStatus} from '../mock/task.js';
 
 
 export default class TaskAreaPresenter {
@@ -16,9 +17,15 @@ export default class TaskAreaPresenter {
 
     constructor(tasksModel, mainContainer) {
         this.#tasksModel = tasksModel;
+        this.#tasksModel.addObserver(this.#handleModelChange.bind(this));
         
         render(this.#taskAreaComponent, mainContainer);
         this.#taskAreaContainer = mainContainer.querySelector('.container');
+    }
+
+    #handleModelChange() {
+        this.#clearTaskArea();
+        this.#renderTaskArea();
     }
 
     init() {
@@ -56,5 +63,20 @@ export default class TaskAreaPresenter {
     #renderTask(task, taskColor, container) {
         var taskComponent = new TaskComponent(task, taskColor);
         render(taskComponent, container);
+    }
+
+    createTask() {
+        var task = document.querySelector('.new-task__input').value.trim();
+        
+        if (!task) {
+            return;
+        }
+        this.#tasksModel.addTask(task);
+
+        document.querySelector('.new-task__input').value = '';
+    }
+
+    #clearTaskArea() {
+        this.#taskAreaComponent.element.innerHTML = '';
     }
 }
