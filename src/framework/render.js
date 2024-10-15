@@ -3,9 +3,9 @@ import AbstractComponent from './view/abstract-component.js';
 
 const RenderPosition = {
     BEFOREBEGIN: 'beforebegin',  // Перед самим элементом targetElement
-    AFTERBEGIN: 'afterbegin',    // Внутри элемента targetElement, перед его первым потомком
-    BEFOREEND: 'beforeend',      // Внутри элемента targetElement, после его последнего потомка
-    AFTEREND: 'afterend',        // После самого элемента targetElement
+    AFTERBEGIN:  'afterbegin',   // Внутри элемента targetElement, перед его первым потомком
+    BEFOREEND:   'beforeend',    // Внутри элемента targetElement, после его последнего потомка
+    AFTEREND:    'afterend',     // После самого элемента targetElement
 };
 
 function createElement(template) {
