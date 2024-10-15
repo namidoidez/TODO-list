@@ -1,3 +1,4 @@
+import TaskAreaComponent from '../view/task-area-component.js';
 import TaskListComponent from '../view/task-list-component.js';
 import TaskComponent from '../view/task-component.js';
 import EmptyTaskComponent from '../view/empty-task-component.js';
@@ -9,10 +10,15 @@ export default class TaskAreaPresenter {
     #tasksModel = null;
     #taskArea = null;
     #taskAreaContainer = null;
+    #taskAreaComponent = new TaskAreaComponent();
+    #emptyTaskComponent = new EmptyTaskComponent();
+    #buttonClearComponent = new ButtonClearComponent();
 
-    constructor(tasksModel, taskAreaContainer) {
+    constructor(tasksModel, mainContainer) {
         this.#tasksModel = tasksModel;
-        this.#taskAreaContainer = taskAreaContainer;
+        
+        render(this.#taskAreaComponent, mainContainer);
+        this.#taskAreaContainer = mainContainer.querySelector('.container');
     }
 
     init() {
@@ -29,16 +35,16 @@ export default class TaskAreaPresenter {
             render(taskListComponent, this.#taskAreaContainer);
             
             taskListContainer = this.#taskAreaContainer.querySelectorAll('.tasks__list')[index];
-            
+
             if (taskList.items.length > 0) {    
                 this.#renderTaskList(taskList.items, taskColor, taskListContainer);
             }
             else {
-                render(new EmptyTaskComponent(), taskListContainer);
+                render(this.#emptyTaskComponent, taskListContainer);
             }
         });
-            
-        render(new ButtonClearComponent(), taskListContainer);
+
+        render(this.#buttonClearComponent, taskListContainer);
     }
 
     #renderTaskList(taskList, taskColor, taskListContainer) {
