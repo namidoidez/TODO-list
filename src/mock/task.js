@@ -5,7 +5,7 @@ const TaskListStatus = {
     BACKLOG:   0,
     INPROCESS: 1,
     DONE:      2,
-    BASKET:    3,
+    BASKET:    3
 };
 
 var taskArea = [
@@ -17,15 +17,15 @@ var taskArea = [
         items: [
             {
                 id: generateId(), 
-                task: 'Выучить JS',
+                title: 'Выучить JS'
             },  
             {
                 id: generateId(), 
-                task: 'Выучить React',
+                title: 'Выучить React'
             },
             {
                 id: generateId(), 
-                task: 'Сделать домашку',
+                title: 'Сделать домашку'
             },
         ]
     },
@@ -38,11 +38,11 @@ var taskArea = [
         items: [ 
             {
                 id: generateId(), 
-                task: 'Выпить смузи',
+                title: 'Выпить смузи'
             },
             {
                 id: generateId(), 
-                task: 'Попить воды',
+                title: 'Попить воды'
             },
         ]
     },
@@ -55,11 +55,11 @@ var taskArea = [
         items: [
             {
                 id: generateId(), 
-                task: 'Позвонить маме',
+                title: 'Позвонить маме'
             },  
             {
                 id: generateId(), 
-                task: 'Погладить кота',
+                title: 'Погладить кота'
             },
         ]
     },
@@ -72,11 +72,11 @@ var taskArea = [
         items: [
             {
                 id: generateId(), 
-                task: 'Сходить погулять',
+                title: 'Сходить погулять'
             },  
             {
                 id: generateId(), 
-                task: 'Прочитать Войну и Мир',
+                title: 'Прочитать Войну и Мир'
             },
         ]
     },
