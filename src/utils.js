@@ -1,3 +1,5 @@
+var lastId = 0;
+
 export function generateId() {
-    return Math.ceil(Math.random() * 100_000);
+    return lastId++;
 }
