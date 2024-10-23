@@ -1,4 +1,5 @@
 import AbstractComponent from '../framework/view/abstract-component.js';
+import {generateId} from '../utils.js';
 
 
 function createTaskListComponentTemplate(taskListTitle, taskColor) {
@@ -12,13 +13,35 @@ function createTaskListComponentTemplate(taskListTitle, taskColor) {
 }
 
 export default class TaskListComponent extends AbstractComponent {
-    constructor(taskListTitle = 'Название блока', taskColor = 'black') {
+    taskListTitle = null;
+    taskListColor = null;
+    
+    constructor(taskList, onTaskDrop) {
         super();
-        this.taskListTitle = taskListTitle;
-        this.taskColor = taskColor;
+        this.taskListTitle = taskList.title;
+        this.taskListColor = taskList.color;
+        this.#setDropHandler(onTaskDrop, taskList);
     }
     
     get template() {
-        return createTaskListComponentTemplate(this.taskListTitle, this.taskColor);
+        return createTaskListComponentTemplate(this.taskListTitle, this.taskListColor);
+    }
+
+    #setDropHandler(onTaskDrop, taskList) {
+        var container = this.element;
+
+        container.addEventListener('dragover', (event) => {
+            event.preventDefault();
+        })
+
+        container.addEventListener('drop', (event) => {
+            event.preventDefault();
+
+            var taskData = event.dataTransfer.getData('text/plain');
+            taskData = JSON.parse(taskData);
+            var targetTask = event.target.closest('.tasks__item');
+            var targetTaskId = targetTask?.dataset.taskid;
+            onTaskDrop(taskData.task, taskData.taskListId, taskList.id, targetTaskId);
+        })
     }
 }

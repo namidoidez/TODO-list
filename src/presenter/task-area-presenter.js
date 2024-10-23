@@ -23,28 +23,38 @@ export default class TaskAreaPresenter {
         this.#taskAreaContainer = mainContainer.querySelector('.container');
     }
 
-    #handleModelChange() {
-        this.#clearTaskArea();
-        this.#renderTaskArea();
-    }
-
     init() {
         this.#taskArea = this.#tasksModel.tasks;
         this.#renderTaskArea();
+    }
+
+    createTask() {
+        var taskTitle = document.querySelector('.new-task__input').value.trim();
+        
+        if (!taskTitle) {
+            return;
+        }
+        this.#tasksModel.addTask(taskTitle);
+
+        document.querySelector('.new-task__input').value = '';
+    }
+
+    clearBasket() {
+        this.#tasksModel.removeTasksByStatus(TaskListStatus.BASKET);
+        this.#buttonClearComponent.element.disabled = true;
     }
     
     #renderTaskArea() {
         var taskListContainer = null;
 
         this.#taskArea.forEach((taskList, index) => {
-            var taskColor = taskList.color;
-            var taskListComponent = new TaskListComponent(taskList.title, taskColor);
+            var taskListComponent = new TaskListComponent(taskList, this.#handleTaskDrop.bind(this));
             render(taskListComponent, this.#taskAreaContainer);
             
             taskListContainer = this.#taskAreaContainer.querySelectorAll('.tasks__list')[index];
 
             if (taskList.items.length > 0) {    
-                this.#renderTaskList(taskList.items, taskColor, taskListContainer);
+                this.#renderTaskList(taskList, taskListContainer);
             }
             else {
                 render(this.#emptyTaskComponent, taskListContainer);
@@ -54,34 +64,32 @@ export default class TaskAreaPresenter {
         render(this.#buttonClearComponent, taskListContainer);
     }
 
-    #renderTaskList(taskList, taskColor, taskListContainer) {
-        taskList.forEach(item => {
-            this.#renderTask(item.task, taskColor, taskListContainer)
+    #renderTaskList(taskList, taskListContainer) {
+        taskList.items.forEach(task => {
+            this.#renderTask(task, taskList.color, taskList.id, taskListContainer)
         }); 
     }
 
-    #renderTask(task, taskColor, container) {
-        var taskComponent = new TaskComponent(task, taskColor);
+    #renderTask(task, taskColor, taskListId, container) {
+        var taskComponent = new TaskComponent(task, taskColor, taskListId);
         render(taskComponent, container);
-    }
-
-    createTask() {
-        var task = document.querySelector('.new-task__input').value.trim();
-        
-        if (!task) {
-            return;
-        }
-        this.#tasksModel.addTask(task);
-
-        document.querySelector('.new-task__input').value = '';
-    }
-
-    clearBasket() {
-        this.#tasksModel.removeTasksByStatus(TaskListStatus.BASKET);
-        this.#buttonClearComponent.element.disabled = true;
     }
 
     #clearTaskArea() {
         this.#taskAreaComponent.element.innerHTML = '';
+    }
+
+    #handleModelChange() {
+        this.#clearTaskArea();
+        this.#renderTaskArea();
+    }
+
+    #handleTaskDrop(task, oldTaskStatus, newTaskStatus, targetTaskId) {
+        if (targetTaskId != undefined && targetTaskId != null) {
+            this.#tasksModel.moveTask(task, oldTaskStatus, newTaskStatus, targetTaskId);
+        }
+        else {
+            this.#tasksModel.moveTaskToEnd(task, oldTaskStatus, newTaskStatus);
+        }
     }
 }
