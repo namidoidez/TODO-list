@@ -4,15 +4,13 @@ import TaskComponent from '../view/task-component.js';
 import EmptyTaskComponent from '../view/empty-task-component.js';
 import ButtonClearComponent from '../view/button-clear-component.js';
 import {render} from '../framework/render.js';
-import {TaskListStatus} from '../mock/task.js';
+import {TaskListStatus} from '../const.js';
 
 
 export default class TaskAreaPresenter {
     #tasksModel = null;
-    #taskArea = null;
     #taskAreaContainer = null;
     #taskAreaComponent = new TaskAreaComponent();
-    #emptyTaskComponent = new EmptyTaskComponent();
     #buttonClearComponent = new ButtonClearComponent(this.clearBasket.bind(this));
 
     constructor(tasksModel, mainContainer) {
@@ -24,13 +22,11 @@ export default class TaskAreaPresenter {
     }
 
     init() {
-        this.#taskArea = this.#tasksModel.tasks;
         this.#renderTaskArea();
     }
 
     createTask() {
         var taskTitle = document.querySelector('.new-task__input').value.trim();
-        
         if (!taskTitle) {
             return;
         }
@@ -41,23 +37,23 @@ export default class TaskAreaPresenter {
 
     clearBasket() {
         this.#tasksModel.removeTasksByStatus(TaskListStatus.BASKET);
-        this.#buttonClearComponent.element.disabled = true;
+        // this.#buttonClearComponent.element.disabled = true;
     }
     
     #renderTaskArea() {
         var taskListContainer = null;
 
-        this.#taskArea.forEach((taskList, index) => {
-            var taskListComponent = new TaskListComponent(taskList, this.#handleTaskDrop.bind(this));
+        Object.values(TaskListStatus).forEach((taskListStatus, index) => {
+            var taskListComponent = new TaskListComponent(taskListStatus, this.#handleTaskDrop.bind(this));
             render(taskListComponent, this.#taskAreaContainer);
-            
             taskListContainer = this.#taskAreaContainer.querySelectorAll('.tasks__list')[index];
-
-            if (taskList.items.length > 0) {    
+            
+            var taskList = this.#tasksModel.getTasksByStatus(taskListStatus);
+            if (taskList.length > 0) {    
                 this.#renderTaskList(taskList, taskListContainer);
             }
             else {
-                render(this.#emptyTaskComponent, taskListContainer);
+                render(new EmptyTaskComponent(), taskListContainer);
             }
         });
 
@@ -65,13 +61,13 @@ export default class TaskAreaPresenter {
     }
 
     #renderTaskList(taskList, taskListContainer) {
-        taskList.items.forEach(task => {
-            this.#renderTask(task, taskList.color, taskList.id, taskListContainer)
+        taskList.forEach((task) => {
+            this.#renderTask(task, taskListContainer)
         }); 
     }
 
-    #renderTask(task, taskColor, taskListId, container) {
-        var taskComponent = new TaskComponent(task, taskColor, taskListId);
+    #renderTask(task, container) {
+        var taskComponent = new TaskComponent(task);
         render(taskComponent, container);
     }
 
@@ -84,12 +80,12 @@ export default class TaskAreaPresenter {
         this.#renderTaskArea();
     }
 
-    #handleTaskDrop(task, oldTaskStatus, newTaskStatus, targetTaskId) {
+    #handleTaskDrop(taskId, targetTaskId, targetStatus) {
         if (targetTaskId != undefined && targetTaskId != null) {
-            this.#tasksModel.moveTask(task, oldTaskStatus, newTaskStatus, targetTaskId);
+            this.#tasksModel.moveTask(taskId, targetTaskId, targetStatus);
         }
         else {
-            this.#tasksModel.moveTaskToEnd(task, oldTaskStatus, newTaskStatus);
+            this.#tasksModel.moveTaskToEnd(taskId, targetStatus);
         }
     }
 }

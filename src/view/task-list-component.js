@@ -1,5 +1,5 @@
 import AbstractComponent from '../framework/view/abstract-component.js';
-import {generateId} from '../utils.js';
+import {TaskListTitle, TaskListColor} from '../const.js'
 
 
 function createTaskListComponentTemplate(taskListTitle, taskColor) {
@@ -13,21 +13,23 @@ function createTaskListComponentTemplate(taskListTitle, taskColor) {
 }
 
 export default class TaskListComponent extends AbstractComponent {
+    taskListStatus = null;
     taskListTitle = null;
     taskListColor = null;
     
-    constructor(taskList, onTaskDrop) {
+    constructor(taskListStatus, onTaskDrop) {
         super();
-        this.taskListTitle = taskList.title;
-        this.taskListColor = taskList.color;
-        this.#setDropHandler(onTaskDrop, taskList);
+        this.taskListStatus = taskListStatus;
+        this.taskListTitle = TaskListTitle[taskListStatus];
+        this.taskListColor = TaskListColor[taskListStatus];
+        this.#setDropHandler(onTaskDrop);
     }
     
     get template() {
         return createTaskListComponentTemplate(this.taskListTitle, this.taskListColor);
     }
 
-    #setDropHandler(onTaskDrop, taskList) {
+    #setDropHandler(onTaskDrop) {
         var container = this.element;
 
         container.addEventListener('dragover', (event) => {
@@ -37,11 +39,10 @@ export default class TaskListComponent extends AbstractComponent {
         container.addEventListener('drop', (event) => {
             event.preventDefault();
 
-            var taskData = event.dataTransfer.getData('text/plain');
-            taskData = JSON.parse(taskData);
+            var taskId = event.dataTransfer.getData('text/plain');
             var targetTask = event.target.closest('.tasks__item');
             var targetTaskId = targetTask?.dataset.taskid;
-            onTaskDrop(taskData.task, taskData.taskListId, taskList.id, targetTaskId);
+            onTaskDrop(taskId, targetTaskId, this.taskListStatus);
         })
     }
 }

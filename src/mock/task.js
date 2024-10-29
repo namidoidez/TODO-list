@@ -1,85 +1,52 @@
 import {generateId} from '../utils.js'
+import {TaskListStatus} from '../const.js'
 
 
-const TaskListStatus = {
-    BACKLOG:   0,
-    INPROCESS: 1,
-    DONE:      2,
-    BASKET:    3
-};
-
-var taskArea = [
+export var taskArea = [
     /* taskList */
     {
-        id: TaskListStatus.BACKLOG,
-        title: 'Бэклог',
-        color: 'black',
-        items: [
-            {
-                id: generateId(), 
-                title: 'Выучить JS'
-            },  
-            {
-                id: generateId(), 
-                title: 'Выучить React'
-            },
-            {
-                id: generateId(), 
-                title: 'Сделать домашку'
-            },
-        ]
+        id: generateId(),
+        title: 'Выучить JS',
+        status: TaskListStatus.BACKLOG
     },
-    
-    /* taskList */
     {
-        id: TaskListStatus.INPROCESS,
-        title: 'В процессе',
-        color: 'royalblue',
-        items: [ 
-            {
-                id: generateId(), 
-                title: 'Выпить смузи'
-            },
-            {
-                id: generateId(), 
-                title: 'Попить воды'
-            },
-        ]
+        id: generateId(),
+        title: 'Выучить React',
+        status: TaskListStatus.BACKLOG
     },
-    
-    /* taskList */
     {
-        id: TaskListStatus.DONE,
-        title: 'Готово',
-        color: 'green',
-        items: [
-            {
-                id: generateId(), 
-                title: 'Позвонить маме'
-            },  
-            {
-                id: generateId(), 
-                title: 'Погладить кота'
-            },
-        ]
+        id: generateId(),
+        title: 'Сделать домашку',
+        status: TaskListStatus.BACKLOG
     },
-    
-    /* taskList */
     {
-        id: TaskListStatus.BASKET,
-        title: 'Корзина',
-        color: 'brown',
-        items: [
-            {
-                id: generateId(), 
-                title: 'Сходить погулять'
-            },  
-            {
-                id: generateId(), 
-                title: 'Прочитать Войну и Мир'
-            },
-        ]
+        id: generateId(),
+        title: 'Выпить смузи',
+        status: TaskListStatus.INPROCESS
     },
+    {
+        id: generateId(),
+        title: 'Попить воды',
+        status: TaskListStatus.INPROCESS
+    },
+    {
+        id: generateId(),
+        title: 'Позвонить маме',
+        status: TaskListStatus.DONE
+    },
+    {
+        id: generateId(),
+        title: 'Погладить кота',
+        status: TaskListStatus.DONE
+    },
+    {
+        id: generateId(),
+        title: 'Сходить погулять',
+        status: TaskListStatus.BASKET
+    },
+    {
+        id: generateId(),
+        title: 'Прочитать Войну и Мир',
+        status: TaskListStatus.BASKET
+    }
 ];
-
-export {TaskListStatus, taskArea};

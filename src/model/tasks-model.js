@@ -1,5 +1,6 @@
-import {TaskListStatus, taskArea} from '../mock/task.js'
+import {taskArea} from '../mock/task.js'
 import {generateId} from '../utils.js'
+import {TaskListStatus} from '../const.js'
 
 
 export default class TasksModel {
@@ -13,43 +14,50 @@ export default class TasksModel {
     addTask(taskTitle) {
         var newTask = {
             id: generateId(), 
-            title: taskTitle
-        }
-        this.#tasks[TaskListStatus.BACKLOG].items.push(newTask);
+            title: taskTitle,
+            status: TaskListStatus.BACKLOG
+        };
+        this.#tasks.push(newTask);
         
         this._notifyObservers();
     }
 
-    moveTaskToEnd(task, oldTaskStatus, newTaskStatus) {
-        var index = this.#tasks[oldTaskStatus].items.findIndex(t => t.id == task.id);
+    moveTaskToEnd(taskId, targetStatus) {
+        var taskIndex = this.#tasks.findIndex((task) => task.id == taskId);
+        var task = this.#tasks.splice(taskIndex, 1)[0];
+        task.status = targetStatus;
+        this.#tasks.push(task);
 
-        if (index != -1) { 
-            this.#tasks[oldTaskStatus].items.splice(index, 1);
-            this.#tasks[newTaskStatus].items.push(task);
-
-            this._notifyObservers();
-        }
+        this._notifyObservers();
     }
     
-    moveTask(task, oldTaskStatus, newTaskStatus, targetTaskId) { 
-        var currentTaskIndex = this.#tasks[oldTaskStatus].items.findIndex(t => t.id == task.id);
-        var targetTaskIndex = this.#tasks[newTaskStatus].items.findIndex(t => t.id == targetTaskId);
+    moveTask(taskId, targetTaskId, targetStatus) { 
+        var currentTaskIndex = this.#tasks.findIndex((task) => task.id == taskId);
+        var targetTaskIndex = this.#tasks.findIndex((task) => task.id == targetTaskId);
         
-        if (currentTaskIndex != -1 && targetTaskIndex != -1) { 
-            this.#tasks[oldTaskStatus].items.splice(currentTaskIndex, 1);
-            this.#tasks[newTaskStatus].items.splice(targetTaskIndex, 0, task);
-            
-            this._notifyObservers();
-        }
-        else {
-            this.moveTaskToEnd(task, oldTaskStatus, newTaskStatus);
-        }
+        var currentTask = this.#tasks.splice(currentTaskIndex, 1)[0];
+        currentTask.status = targetStatus;
+        this.#tasks.splice(targetTaskIndex, 0, currentTask);
+        
+        this._notifyObservers();
+    }
+
+    getTasksByStatus(taskListStatus) {
+        return this.#tasks.filter((task) => task.status == taskListStatus);
     }
 
     removeTasksByStatus(taskListStatus) {
-        this.#tasks[taskListStatus].items = [];
+        var tasks = this.getTasksByStatus(taskListStatus);
+        tasks.forEach((task) => {
+            this.removeTask(task);
+        })
         
         this._notifyObservers();
+    }
+
+    removeTask(task) {
+        var taskIndex = this.#tasks.indexOf(task);
+        this.#tasks.splice(taskIndex, 1);
     }
     
     addObserver(observer) {

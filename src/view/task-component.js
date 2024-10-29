@@ -1,4 +1,5 @@
 import AbstractComponent from '../framework/view/abstract-component.js';
+import {TaskListColor} from '../const.js';
 
 
 function createTaskComponentTemplate(taskId, taskTitle, taskColor) {
@@ -12,29 +13,27 @@ export default class TaskComponent extends AbstractComponent {
     taskTitle = null;
     taskColor = null;
     
-    constructor(task, taskColor = 'black', taskListId) {
+    constructor(task) {
         super();
         this.taskId = task.id;
         this.taskTitle = task.title;
-        this.taskColor = taskColor;
-        this.#afterCreateElement(task, taskListId);
+        this.taskColor = TaskListColor[task.status];
+        this.#afterCreateElement();
     }
 
     get template() {
         return createTaskComponentTemplate(this.taskId, this.taskTitle, this.taskColor);
     }
 
-    #afterCreateElement(task, taskListId) {
-        this.#makeTaskDraggable(task, taskListId);
+    #afterCreateElement() {
+        this.#makeTaskDraggable();
     }
 
-    #makeTaskDraggable(task, taskListId) {
+    #makeTaskDraggable() {
         this.element.setAttribute('draggable', true);
 
-        this.element.addEventListener('dragstart', (event) => {           
-            var taskData = {task: task, taskListId: taskListId};
-            taskData = JSON.stringify(taskData);
-            event.dataTransfer.setData('text/plain', taskData);
+        this.element.addEventListener('dragstart', (event) => {
+            event.dataTransfer.setData('text/plain', this.taskId);
         })
     }
 }
