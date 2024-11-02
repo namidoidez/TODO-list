@@ -1,5 +1,11 @@
-var lastId = 0;
+export default class IdGenerator {
+    #lastId;
+    
+    constructor(lastId) {
+        this.#lastId = lastId;
+    }
 
-export function generateId() {
-    return lastId++;
+    generate() {
+        return this.#lastId++;
+    }
 }
