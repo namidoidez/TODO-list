@@ -3,14 +3,17 @@ import TaskListComponent from '../view/task-list-component.js';
 import TaskComponent from '../view/task-component.js';
 import EmptyTaskComponent from '../view/empty-task-component.js';
 import ButtonClearComponent from '../view/button-clear-component.js';
-import {render} from '../framework/render.js';
-import {TaskListStatus} from '../const.js';
+import {render, RenderPosition} from '../framework/render.js';
+import {TaskListStatus, UserAction} from '../const.js';
 
 
 export default class TaskAreaPresenter {
     #tasksModel = null;
-    #taskAreaContainer = null;
+
     #taskAreaComponent = new TaskAreaComponent();
+    #taskAreaContainer = null;
+    
+    #taskListContainers = [];
     #buttonClearComponent = new ButtonClearComponent(this.clearBasket.bind(this));
 
     constructor(tasksModel, mainContainer) {
@@ -21,49 +24,75 @@ export default class TaskAreaPresenter {
         this.#taskAreaContainer = mainContainer.querySelector('.container');
     }
 
-    init() {
+    async init() {
+        await this.#tasksModel.init();
+        this.#clearTaskArea();
         this.#renderTaskArea();
     }
 
-    createTask() {
+    async createTask() {
         var taskTitle = document.querySelector('.new-task__input').value.trim();
         if (!taskTitle) {
             return;
         }
-        this.#tasksModel.addTask(taskTitle);
-
-        document.querySelector('.new-task__input').value = '';
+        
+        try {
+            await this.#tasksModel.addTask(taskTitle);
+            document.querySelector('.new-task__input').value = '';
+        }
+        catch (err) {
+            console.error(`Ошибка при создании задачи: ${err}`);
+        }
     }
 
-    clearBasket() {
-        this.#tasksModel.removeTasksByStatus(TaskListStatus.BASKET);
-        // this.#buttonClearComponent.element.disabled = true;
+    async clearBasket() {
+        try {
+            await this.#tasksModel.removeTasksByStatus(TaskListStatus.BASKET);
+        }
+        catch (err) {
+            console.error(`Ошибка при очистке корзины: ${err}`);
+        }
+    }
+
+    async #handleTaskDrop(taskId, targetTaskId, targetStatus) {
+        try {
+
+            if (targetTaskId != undefined && targetTaskId != null) {
+                await this.#tasksModel.moveTask(taskId, targetTaskId, targetStatus);
+            }
+            else {
+                await this.#tasksModel.moveTaskToEnd(taskId, targetStatus);
+            }
+        }
+        catch (err) {
+            console.error(`Ошибка при обновлении статуса задачи: ${err}`);
+        }
     }
     
     #renderTaskArea() {
-        var taskListContainer = null;
-
-        Object.values(TaskListStatus).forEach((taskListStatus, index) => {
-            var taskListComponent = new TaskListComponent(taskListStatus, this.#handleTaskDrop.bind(this));
-            render(taskListComponent, this.#taskAreaContainer);
-            taskListContainer = this.#taskAreaContainer.querySelectorAll('.tasks__list')[index];
-            
-            var taskList = this.#tasksModel.getTasksByStatus(taskListStatus);
-            if (taskList.length > 0) {    
-                this.#renderTaskList(taskList, taskListContainer);
-            }
-            else {
-                render(new EmptyTaskComponent(), taskListContainer);
-            }
+        Object.values(TaskListStatus).forEach((taskListStatus) => {
+            this.#renderTaskList(taskListStatus, this.#taskAreaContainer);
         });
-
-        render(this.#buttonClearComponent, taskListContainer);
+        
+        render(this.#buttonClearComponent, this.#taskListContainers[TaskListStatus.BASKET]);
     }
 
-    #renderTaskList(taskList, taskListContainer) {
-        taskList.forEach((task) => {
-            this.#renderTask(task, taskListContainer)
-        }); 
+    #renderTaskList(taskListStatus, container, renderPosition = RenderPosition.BEFOREEND) {
+        var taskListComponent = new TaskListComponent(taskListStatus, this.#handleTaskDrop.bind(this));
+        render(taskListComponent, container, renderPosition);
+        
+        var taskListContainer = this.#taskAreaContainer.querySelectorAll('.tasks__list')[taskListStatus];
+        this.#taskListContainers[taskListStatus] = taskListContainer;
+
+        var taskList = this.#tasksModel.getTasksByStatus(taskListStatus);
+        if (taskList.length > 0) {    
+            taskList.forEach((task) => {
+                this.#renderTask(task, this.#taskListContainers[taskListStatus]);
+            });
+        }
+        else {
+            render(new EmptyTaskComponent(), taskListContainer);
+        }
     }
 
     #renderTask(task, container) {
@@ -75,17 +104,25 @@ export default class TaskAreaPresenter {
         this.#taskAreaComponent.element.innerHTML = '';
     }
 
-    #handleModelChange() {
-        this.#clearTaskArea();
-        this.#renderTaskArea();
-    }
+    #handleModelChange(event, payload) {
+        switch (event) {
+            case UserAction.ADD_TASK:    
+                this.#clearTaskArea();
+                this.#renderTaskArea();
+                break;
+            case UserAction.UPDATE_TASK:
+                this.#clearTaskArea();
+                this.#renderTaskArea();
+                break;
+            case UserAction.REMOVE_TASK:
+                this.#clearTaskArea();
+                this.#renderTaskArea();
 
-    #handleTaskDrop(taskId, targetTaskId, targetStatus) {
-        if (targetTaskId != undefined && targetTaskId != null) {
-            this.#tasksModel.moveTask(taskId, targetTaskId, targetStatus);
-        }
-        else {
-            this.#tasksModel.moveTaskToEnd(taskId, targetStatus);
+                if (this.#buttonClearComponent)
+                {
+                    this.#buttonClearComponent.element.disabled = this.#tasksModel.hasTasksByStatus(TaskListStatus.BASKET);
+                }
+                break;
         }
     }
 }
