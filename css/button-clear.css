@@ -14,3 +14,9 @@
     color: black;
     background-color: gray;
 }
+
+.tasks-item__button--clear:disabled {
+    color: black;
+    background-color: gray;
+    cursor: not-allowed;
+}

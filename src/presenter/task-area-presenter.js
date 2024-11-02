@@ -114,7 +114,7 @@ export default class TaskAreaPresenter {
         switch (event) {
             case UserAction.ADD_TASK:    
                 this.#renderTask(payload, this.#taskListContainers[payload.status]);
-                break;
+                return;
             case UserAction.UPDATE_TASK:
                 this.#clearTaskArea();
                 this.#renderTaskArea();
@@ -123,12 +123,12 @@ export default class TaskAreaPresenter {
                 this.#clearTaskList(TaskListStatus.BASKET);
                 this.#renderTaskList(TaskListStatus.BASKET, this.#taskAreaContainer);
                 render(this.#buttonClearComponent, this.#taskListContainers[TaskListStatus.BASKET]);
-
-                if (this.#buttonClearComponent)
-                {
-                    this.#buttonClearComponent.element.disabled = this.#tasksModel.hasTasksByStatus(TaskListStatus.BASKET);
-                }
                 break;
+        }
+
+        if (this.#buttonClearComponent)
+        {
+            this.#buttonClearComponent.element.disabled = !this.#tasksModel.hasTasksByStatus(TaskListStatus.BASKET);
         }
     }
 }
