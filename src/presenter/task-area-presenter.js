@@ -89,7 +89,7 @@ export default class TaskAreaPresenter {
         var taskList = this.#tasksModel.getTasksByStatus(taskListStatus);
         if (taskList.length > 0) {    
             taskList.forEach((task) => {
-                this.#renderTask(task, this.#taskListContainers[taskListStatus]);
+                this.#renderTask(task, taskListContainer);
             });
         }
         else {
