@@ -13,6 +13,7 @@ export default class TaskAreaPresenter {
     #taskAreaComponent = new TaskAreaComponent();
     #taskAreaContainer = null;
     
+    #taskListComponents = [];
     #taskListContainers = [];
     #buttonClearComponent = new ButtonClearComponent(this.clearBasket.bind(this));
 
@@ -79,6 +80,7 @@ export default class TaskAreaPresenter {
 
     #renderTaskList(taskListStatus, container, renderPosition = RenderPosition.BEFOREEND) {
         var taskListComponent = new TaskListComponent(taskListStatus, this.#handleTaskDrop.bind(this));
+        this.#taskListComponents[taskListStatus] = taskListComponent;
         render(taskListComponent, container, renderPosition);
         
         var taskListContainer = this.#taskAreaContainer.querySelectorAll('.tasks__list')[taskListStatus];
@@ -104,19 +106,23 @@ export default class TaskAreaPresenter {
         this.#taskAreaComponent.element.innerHTML = '';
     }
 
+    #clearTaskList(taskListStatus) {
+        this.#taskAreaComponent.element.removeChild(this.#taskListComponents[taskListStatus].element);
+    }
+
     #handleModelChange(event, payload) {
         switch (event) {
             case UserAction.ADD_TASK:    
-                this.#clearTaskArea();
-                this.#renderTaskArea();
+                this.#renderTask(payload, this.#taskListContainers[payload.status]);
                 break;
             case UserAction.UPDATE_TASK:
                 this.#clearTaskArea();
                 this.#renderTaskArea();
                 break;
             case UserAction.REMOVE_TASK:
-                this.#clearTaskArea();
-                this.#renderTaskArea();
+                this.#clearTaskList(TaskListStatus.BASKET);
+                this.#renderTaskList(TaskListStatus.BASKET, this.#taskAreaContainer);
+                render(this.#buttonClearComponent, this.#taskListContainers[TaskListStatus.BASKET]);
 
                 if (this.#buttonClearComponent)
                 {
