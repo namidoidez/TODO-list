@@ -5,6 +5,7 @@ import EmptyTaskComponent from '../view/empty-task-component.js';
 import ButtonClearComponent from '../view/button-clear-component.js';
 import {render, RenderPosition} from '../framework/render.js';
 import {TaskListStatus, UserAction} from '../const.js';
+import LoaderComponent from '../view/loader-component.js';
 
 
 export default class TaskAreaPresenter {
@@ -15,18 +16,25 @@ export default class TaskAreaPresenter {
     
     #taskListComponents = [];
     #taskListContainers = [];
+    #loaderComponent = null;
     #buttonClearComponent = new ButtonClearComponent(this.clearBasket.bind(this));
 
     constructor(tasksModel, mainContainer) {
         this.#tasksModel = tasksModel;
         this.#tasksModel.addObserver(this.#handleModelChange.bind(this));
         
+        this.#loaderComponent = new LoaderComponent();
+        render(this.#loaderComponent, mainContainer, RenderPosition.BEFOREBEGIN);
+
         render(this.#taskAreaComponent, mainContainer);
         this.#taskAreaContainer = mainContainer.querySelector('.container');
     }
 
     async init() {
+        this.#loaderComponent.start();
         await this.#tasksModel.init();
+        this.#loaderComponent.stop();
+
         this.#clearTaskArea();
         this.#renderTaskArea();
     }
@@ -37,6 +45,7 @@ export default class TaskAreaPresenter {
             return;
         }
         
+        this.#loaderComponent.start();
         try {
             await this.#tasksModel.addTask(taskTitle);
             document.querySelector('.new-task__input').value = '';
@@ -44,20 +53,26 @@ export default class TaskAreaPresenter {
         catch (err) {
             console.error(`Ошибка при создании задачи: ${err}`);
         }
+        this.#loaderComponent.stop();
     }
 
     async clearBasket() {
+        this.#loaderComponent.start();
+
         try {
             await this.#tasksModel.removeTasksByStatus(TaskListStatus.BASKET);
         }
         catch (err) {
             console.error(`Ошибка при очистке корзины: ${err}`);
         }
+
+        this.#loaderComponent.stop();
     }
 
     async #handleTaskDrop(taskId, targetTaskId, targetStatus) {
-        try {
+        this.#loaderComponent.start();
 
+        try {
             if (targetTaskId != undefined && targetTaskId != null) {
                 await this.#tasksModel.moveTask(taskId, targetTaskId, targetStatus);
             }
@@ -68,6 +83,8 @@ export default class TaskAreaPresenter {
         catch (err) {
             console.error(`Ошибка при обновлении статуса задачи: ${err}`);
         }
+
+        this.#loaderComponent.stop();
     }
     
     #renderTaskArea() {
@@ -86,10 +103,12 @@ export default class TaskAreaPresenter {
         var taskListContainer = this.#taskAreaContainer.querySelectorAll('.tasks__list')[taskListStatus];
         this.#taskListContainers[taskListStatus] = taskListContainer;
 
+        this.#loaderComponent.start();
         var taskList = this.#tasksModel.getTasksByStatus(taskListStatus);
-        if (taskList.length > 0) {    
+        this.#loaderComponent.stop();
+        if (taskList.length > 0) {
             taskList.forEach((task) => {
-                this.#renderTask(task, taskListContainer);
+                this.#renderTask(task, this.#taskListContainers[taskListStatus]);
             });
         }
         else {
@@ -114,6 +133,7 @@ export default class TaskAreaPresenter {
         switch (event) {
             case UserAction.ADD_TASK:    
                 this.#renderTask(payload, this.#taskListContainers[payload.status]);
+                this.#loaderComponent.stop();
                 return;
             case UserAction.UPDATE_TASK:
                 this.#clearTaskArea();
@@ -126,8 +146,7 @@ export default class TaskAreaPresenter {
                 break;
         }
 
-        if (this.#buttonClearComponent)
-        {
+        if (this.#buttonClearComponent) {
             this.#buttonClearComponent.element.disabled = !this.#tasksModel.hasTasksByStatus(TaskListStatus.BASKET);
         }
     }
