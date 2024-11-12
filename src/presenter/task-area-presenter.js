@@ -14,7 +14,6 @@ export default class TaskAreaPresenter {
     #taskAreaComponent = new TaskAreaComponent();
     #taskAreaContainer = null;
     
-    #taskListComponents = [];
     #taskListContainers = [];
     #loaderComponent = null;
     #buttonClearComponent = new ButtonClearComponent(this.clearBasket.bind(this));
@@ -40,7 +39,8 @@ export default class TaskAreaPresenter {
     }
 
     async createTask() {
-        var taskTitle = document.querySelector('.new-task__input').value.trim();
+        var newTaskInput = document.querySelector('.new-task__input');
+        var taskTitle = newTaskInput.value.trim();
         if (!taskTitle) {
             return;
         }
@@ -48,7 +48,7 @@ export default class TaskAreaPresenter {
         this.#loaderComponent.start();
         try {
             await this.#tasksModel.addTask(taskTitle);
-            document.querySelector('.new-task__input').value = '';
+            newTaskInput.value = '';
         }
         catch (err) {
             console.error(`Ошибка при создании задачи: ${err}`);
@@ -97,7 +97,6 @@ export default class TaskAreaPresenter {
 
     #renderTaskList(taskListStatus, container, renderPosition = RenderPosition.BEFOREEND) {
         var taskListComponent = new TaskListComponent(taskListStatus, this.#handleTaskDrop.bind(this));
-        this.#taskListComponents[taskListStatus] = taskListComponent;
         render(taskListComponent, container, renderPosition);
         
         var taskListContainer = this.#taskAreaContainer.querySelectorAll('.tasks__list')[taskListStatus];
@@ -126,19 +125,25 @@ export default class TaskAreaPresenter {
     }
 
     #clearTaskList(taskListStatus) {
-        this.#taskAreaComponent.element.removeChild(this.#taskListComponents[taskListStatus].element);
+        this.#taskAreaContainer.removeChild(this.#taskAreaContainer.children[taskListStatus]);
     }
 
     #handleModelChange(event, payload) {
         switch (event) {
             case UserAction.ADD_TASK:    
-                this.#renderTask(payload, this.#taskListContainers[payload.status]);
-                this.#loaderComponent.stop();
+                var taskListContainer = this.#taskListContainers[payload.status];
+                var emptyTask = taskListContainer.querySelector('.tasks__item--empty');
+                if (emptyTask) {
+                    taskListContainer.removeChild(emptyTask);
+                }
+                this.#renderTask(payload, taskListContainer);
                 return;
+            
             case UserAction.UPDATE_TASK:
                 this.#clearTaskArea();
                 this.#renderTaskArea();
                 break;
+            
             case UserAction.REMOVE_TASK:
                 this.#clearTaskList(TaskListStatus.BASKET);
                 this.#renderTaskList(TaskListStatus.BASKET, this.#taskAreaContainer);
