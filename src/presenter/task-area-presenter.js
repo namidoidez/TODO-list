@@ -14,7 +14,6 @@ export default class TaskAreaPresenter {
     #taskAreaComponent = new TaskAreaComponent();
     #taskAreaContainer = null;
     
-    #taskListContainers = [];
     #loaderComponent = null;
     #buttonClearComponent = new ButtonClearComponent(this.clearBasket.bind(this));
 
@@ -92,22 +91,20 @@ export default class TaskAreaPresenter {
             this.#renderTaskList(taskListStatus, this.#taskAreaContainer);
         });
         
-        render(this.#buttonClearComponent, this.#taskListContainers[TaskListStatus.BASKET]);
+        render(this.#buttonClearComponent, this.#getTaskList(TaskListStatus.BASKET));
     }
 
     #renderTaskList(taskListStatus, container, renderPosition = RenderPosition.BEFOREEND) {
         var taskListComponent = new TaskListComponent(taskListStatus, this.#handleTaskDrop.bind(this));
-        render(taskListComponent, container, renderPosition);
-        
+        render(taskListComponent, container, renderPosition);        
         var taskListContainer = this.#taskAreaContainer.querySelectorAll('.tasks__list')[taskListStatus];
-        this.#taskListContainers[taskListStatus] = taskListContainer;
 
         this.#loaderComponent.start();
         var taskList = this.#tasksModel.getTasksByStatus(taskListStatus);
         this.#loaderComponent.stop();
         if (taskList.length > 0) {
             taskList.forEach((task) => {
-                this.#renderTask(task, this.#taskListContainers[taskListStatus]);
+                this.#renderTask(task, taskListContainer);
             });
         }
         else {
@@ -125,16 +122,20 @@ export default class TaskAreaPresenter {
     }
 
     #clearTaskList(taskListStatus) {
-        this.#taskAreaContainer.removeChild(this.#taskAreaContainer.children[taskListStatus]);
+        this.#taskAreaContainer.removeChild(this.#getTaskList(taskListStatus));
+    }
+
+    #getTaskList(taskListStatus) {
+        return this.#taskAreaContainer.children[taskListStatus];
     }
 
     #handleModelChange(event, payload) {
         switch (event) {
             case UserAction.ADD_TASK:    
-                var taskListContainer = this.#taskListContainers[payload.status];
+                var taskListContainer = this.#getTaskList(payload.status);
                 var emptyTask = taskListContainer.querySelector('.tasks__item--empty');
                 if (emptyTask) {
-                    taskListContainer.removeChild(emptyTask);
+                    emptyTask.remove();
                 }
                 this.#renderTask(payload, taskListContainer);
                 return;
@@ -147,7 +148,7 @@ export default class TaskAreaPresenter {
             case UserAction.REMOVE_TASK:
                 this.#clearTaskList(TaskListStatus.BASKET);
                 this.#renderTaskList(TaskListStatus.BASKET, this.#taskAreaContainer);
-                render(this.#buttonClearComponent, this.#taskListContainers[TaskListStatus.BASKET]);
+                render(this.#buttonClearComponent, this.#getTaskList(TaskListStatus.BASKET));
                 break;
         }
 

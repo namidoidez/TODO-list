@@ -10,10 +10,6 @@ function createLoaderComponentTemplate() {
 }
 
 export default class LoaderComponent extends AbstractComponent {
-    constructor() {
-        super();
-    }
-
     get template() {
         return createLoaderComponentTemplate();
     }

@@ -2,10 +2,10 @@ import AbstractComponent from '../framework/view/abstract-component.js';
 import {TaskListTitle, TaskListColor} from '../const.js'
 
 
-function createTaskListComponentTemplate(taskListTitle, taskColor) {
+function createTaskListComponentTemplate(title, color) {
     return (
         `<section class="tasks">
-            <h3 class="tasks__title tasks__title--${taskColor}">${taskListTitle}</h3>
+            <h3 class="tasks__title tasks__title--${color}">${title}</h3>
             <ul class="tasks__list">
             </ul>
         </section>`
@@ -13,20 +13,20 @@ function createTaskListComponentTemplate(taskListTitle, taskColor) {
 }
 
 export default class TaskListComponent extends AbstractComponent {
-    taskListStatus = null;
-    taskListTitle = null;
-    taskListColor = null;
+    status = null;
+    title = null;
+    color = null;
     
-    constructor(taskListStatus, onTaskDrop) {
+    constructor(status, onTaskDrop) {
         super();
-        this.taskListStatus = taskListStatus;
-        this.taskListTitle = TaskListTitle[taskListStatus];
-        this.taskListColor = TaskListColor[taskListStatus];
+        this.status = status;
+        this.title = TaskListTitle[status];
+        this.color = TaskListColor[status];
         this.#setDropHandler(onTaskDrop);
     }
     
     get template() {
-        return createTaskListComponentTemplate(this.taskListTitle, this.taskListColor);
+        return createTaskListComponentTemplate(this.title, this.color);
     }
 
     #setDropHandler(onTaskDrop) {
@@ -42,7 +42,7 @@ export default class TaskListComponent extends AbstractComponent {
             var taskId = event.dataTransfer.getData('text/plain');
             var targetTask = event.target.closest('.tasks__item');
             var targetTaskId = targetTask?.dataset.taskid;
-            onTaskDrop(taskId, targetTaskId, this.taskListStatus);
+            onTaskDrop(taskId, targetTaskId, this.status);
         })
     }
 }

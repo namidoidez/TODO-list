@@ -33,6 +33,10 @@ a {
   background-color: transparent;
 }
 
+li {
+  list-style-type: none;
+}
+
 abbr[title] {
   border-bottom: none; /* 1 */
   text-decoration: underline; /* 2 */
